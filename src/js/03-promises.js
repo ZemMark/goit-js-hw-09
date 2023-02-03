@@ -17,28 +17,29 @@ function createPromise(position, delay) {
     setTimeout(() => {
       if (shouldResolve) {
         // Fulfill
-        console.log('reject');
         reject({ position, delay });
       } else {
         // Reject
-        console.log('resolve');
         resolve({ position, delay });
       }
     }, delay);
   });
 }
-function onSubmitClick(e) {
+function onSubmitClick(e, delay) {
   e.preventDefault();
   pAmount = Number(refs.amount.value);
   secondDelay = Number(refs.step.value);
   firstDelay = Number(refs.delay.value);
+  delay = firstDelay;
   for (let i = 0; i < pAmount; i++) {
-    createPromise(pAmount, firstDelay)
+    console.log(delay);
+    createPromise(pAmount, delay)
       .then(({ position, delay }) => {
         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
         Notiflix.Notify.success(
           `✅ Fulfilled promise ${position} in ${delay}ms`
         );
+        console.log(delay);
       })
       .catch(({ position, delay }) => {
         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
@@ -46,9 +47,7 @@ function onSubmitClick(e) {
           `❌ Rejected promise ${position} in ${delay}ms`
         );
       });
-    // Number(firstDelay + delay);
-    firstDelay = +secondDelay;
-    // console.log(secondDelay + firstDelay);
-    // firstDelay = +secondDelay;
+
+    delay += secondDelay;
   }
 }
