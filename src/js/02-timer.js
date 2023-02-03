@@ -1,5 +1,7 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
+
 let intervalId = null;
 const refs = {
   start: document.querySelector('[data-start]'),
@@ -17,25 +19,32 @@ const timer = flatpickr(refs.date, {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
+    if (refs.start.classList.contains('active')) {
+      return;
+    }
     // console.log(selectedDates[0]);
     window.addEventListener('keydown', enterPress);
 
     if (selectedDates[0] <= Date.now()) {
-      alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
 
       return;
     }
+    if (refs.start.classList.contains('active')) {
+      return;
+    }
+    refs.start.classList.add('active');
+
     console.log(Date.now);
     refs.start.disabled = false;
     refs.hint.classList.add('visible');
     refs.start.addEventListener('click', timerEngine);
 
     function timerEngine() {
-      if (refs.start.classList.contains('active')) {
-        return;
-      }
+      // if (refs.start.classList.contains('active')) {
+      //   return;
+      // }
       refs.hint.classList.remove('visible');
-      refs.start.classList.add('active');
       window.removeEventListener('keydown', enterPress);
       refs.start.removeEventListener('click', timerEngine);
 
@@ -45,7 +54,7 @@ const timer = flatpickr(refs.date, {
         const currentTime = Date.now();
         const deltaTime = selectedDates[0] - currentTime;
         if (selectedDates[0] < currentTime) {
-          refs.start.classList.remove('active');
+          // refs.start.classList.remove('active');
           return;
         }
         updateTimerInterface(convertMs(deltaTime));
