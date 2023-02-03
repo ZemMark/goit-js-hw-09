@@ -64,15 +64,17 @@ function onSubmitClick(e, delay) {
 refs.form.addEventListener('input', throttle(onInputSet, 1000));
 function onInputSet(e) {
   formData[e.target.name] = e.target.value;
-  fdJSON = JSON.stringify(formData);
+  const fdJSON = JSON.stringify(formData);
   localStorage.setItem(STORAGE_DATA, fdJSON);
 }
 function valuesRestor() {
   try {
     dataToRestore = JSON.parse(localStorage.getItem(STORAGE_DATA)) || {};
-    refs.delay.value = dataToRestore.delay;
-    refs.step.value = dataToRestore.step;
-    refs.amount.value = dataToRestore.amount;
+    if (dataToRestore !== {}) {
+      refs.delay.value = dataToRestore.delay;
+      refs.step.value = dataToRestore.step;
+      refs.amount.value = dataToRestore.amount;
+    }
   } catch (error) {
     console.log('does not work');
   }
