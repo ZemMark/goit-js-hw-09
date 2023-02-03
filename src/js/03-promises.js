@@ -1,14 +1,23 @@
+import throttle from 'lodash.throttle';
 import Notiflix from 'notiflix';
 const refs = {
   delay: document.querySelector('.delay'),
   step: document.querySelector('.step'),
   amount: document.querySelector('.amount'),
   submit: document.querySelector('.submitBtn'),
+  form: document.querySelector('.form'),
 };
+
 let firstDelay = refs.delay.value;
 let secondDelay = refs.step.value;
 let pAmount = refs.amount.value;
+const STORAGE_DATA = 'default-values';
+let dataToRestore = null;
+const formData = JSON.parse(localStorage.getItem(STORAGE_DATA)) || {};
+// const fd = JSON.parse(localStorage.getItem(FEEDBACK_DATA)) || {};
 
+// console.log(formData);
+valuesRestor();
 refs.submit.addEventListener('click', onSubmitClick);
 
 function createPromise(position, delay) {
@@ -50,4 +59,22 @@ function onSubmitClick(e, delay) {
 
     delay += secondDelay;
   }
+}
+
+refs.form.addEventListener('input', throttle(onInputSet, 1000));
+function onInputSet(e) {
+  formData[e.target.name] = e.target.value;
+  fdJSON = JSON.stringify(formData);
+  localStorage.setItem(STORAGE_DATA, fdJSON);
+}
+function valuesRestor() {
+  try {
+    dataToRestore = JSON.parse(localStorage.getItem(STORAGE_DATA));
+    refs.delay.value = dataToRestore.delay;
+    refs.step.value = dataToRestore.step;
+    refs.amount.value = dataToRestore.amount;
+  } catch (error) {
+    console.log('does not work');
+  }
+  console.log(dataToRestore);
 }
